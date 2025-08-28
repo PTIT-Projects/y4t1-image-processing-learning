@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 from datetime import datetime
 import os
+from image_enhancement.image_enhancement import negative_image
 
 def save_pair(input_img: Image.Image, output_img: Image.Image, base_dir: str = "data") -> Path:
     """
@@ -30,11 +31,7 @@ st.write("Choose an algorithm, upload an image, then click Apply.")
 
 # UI controls
 algorithms = [
-    "None (show original)",
-    "Grayscale (stub)",
-    "Gaussian Blur (stub)",
-    "Edge Detect (stub)",
-    "Custom - your implementation"
+    "Negative Image"
 ]
 col1, col2 = st.columns([1, 1])
 
@@ -54,19 +51,8 @@ def apply_algorithm(img: Image.Image, name: str, param: int) -> Image.Image:
     Replace or extend this function with your real implementations.
     It must return a PIL.Image.
     """
-    if name == "None (show original)":
-        return img
-    if name == "Grayscale (stub)":
-        return ImageOps.grayscale(img).convert("RGB")
-    if name == "Gaussian Blur (stub)":
-        # stub: just return original (replace with actual blur)
-        return img
-    if name == "Edge Detect (stub)":
-        # stub: just return original (replace with actual edge detection)
-        return img
-    if name.startswith("Custom"):
-        # keep original until you implement your custom algorithm
-        return img
+    if name == 'Negative Image':
+        return negative_image(img)
     return img
 
 if uploaded is not None:
