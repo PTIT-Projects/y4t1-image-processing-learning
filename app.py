@@ -85,11 +85,6 @@ if uploaded is not None:
             st.success(f"Saved input/output pair to: {saved_folder}")
         except Exception as e:
             st.error(f"Failed to save images: {e}")
-
-        # optional: provide download
-        buf = io.BytesIO()
-        output.save(buf, format="PNG")
-        st.download_button("Download result (PNG)", data=buf.getvalue(), file_name="result.png", mime="image/png")
 else:
     original_placeholder.info("No image uploaded yet.")
     result_placeholder.empty()
