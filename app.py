@@ -4,6 +4,8 @@ import io
 from pathlib import Path
 from datetime import datetime
 import os
+from image_enhancement.image_enhancement import *
+from constants import *
 
 def save_pair(input_img: Image.Image, output_img: Image.Image, base_dir: str = "data") -> Path:
     """
@@ -29,44 +31,35 @@ st.title("Image Processing Playground")
 st.write("Choose an algorithm, upload an image, then click Apply.")
 
 # UI controls
-algorithms = [
-    "None (show original)",
-    "Grayscale (stub)",
-    "Gaussian Blur (stub)",
-    "Edge Detect (stub)",
-    "Custom - your implementation"
-]
+algorithms = {
+    NEGATIVE_IMAGE: NEGATIVE_IMAGE,
+    THRESHOLDING: THRESHOLDING
+}
 col1, col2 = st.columns([1, 1])
-
+params = {}
 with col1:
     uploaded = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-    algorithm = st.selectbox("Algorithm", algorithms)
-    # example parameter (you can add more or remove)
-    param = st.slider("Parameter (example)", 0, 100, 10)
+    algorithm = st.selectbox("Algorithm", list(algorithms.keys()))    
+    if algorithm == 'Thresholding':
+        threshold_value = st.number_input(label="Enter threshold value", min_value = 0, max_value=255)
+        params[THRESHOLD_VALUE] = threshold_value
+
+        
 
 with col2:
     st.markdown("Preview / Result")
     original_placeholder = st.empty()
     result_placeholder = st.empty()
 
-def apply_algorithm(img: Image.Image, name: str, param: int) -> Image.Image:
+def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
     """
     Replace or extend this function with your real implementations.
     It must return a PIL.Image.
     """
-    if name == "None (show original)":
-        return img
-    if name == "Grayscale (stub)":
-        return ImageOps.grayscale(img).convert("RGB")
-    if name == "Gaussian Blur (stub)":
-        # stub: just return original (replace with actual blur)
-        return img
-    if name == "Edge Detect (stub)":
-        # stub: just return original (replace with actual edge detection)
-        return img
-    if name.startswith("Custom"):
-        # keep original until you implement your custom algorithm
-        return img
+    if name == algorithms[NEGATIVE_IMAGE]:
+        return negative_image(img)
+    elif name == algorithms[THRESHOLDING]:
+        return thresholding(img, param[THRESHOLD_VALUE])
     return img
 
 if uploaded is not None:
@@ -76,7 +69,7 @@ if uploaded is not None:
 
     if st.button("Apply"):
         with st.spinner("Applying algorithm..."):
-            output = apply_algorithm(image, algorithm, param)
+            output = apply_algorithm(image, algorithm, params)
         result_placeholder.image(output, caption=f"Result — {algorithm}", width="stretch")
 
         # save pair
