@@ -6,6 +6,8 @@ from datetime import datetime
 import os
 from image_enhancement.image_enhancement import *
 from constants import *
+from image_enhancement.image_enhancement import *
+from constants import *
 
 def save_pair(input_img: Image.Image, output_img: Image.Image, base_dir: str = "data") -> Path:
     """
@@ -33,16 +35,24 @@ st.write("Choose an algorithm, upload an image, then click Apply.")
 # UI controls
 algorithms = {
     NEGATIVE_IMAGE: NEGATIVE_IMAGE,
-    THRESHOLDING: THRESHOLDING
+    THRESHOLDING: THRESHOLDING,
+    LOG_FUNCTION_TRANSFORM: LOG_FUNCTION_TRANSFORM,
+    INVERSE_LOG_FUNCTION_TRANSFORM: INVERSE_LOG_FUNCTION_TRANSFORM
 }
 col1, col2 = st.columns([1, 1])
+params = {}
 params = {}
 with col1:
     uploaded = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
     algorithm = st.selectbox("Algorithm", list(algorithms.keys()))    
-    if algorithm == 'Thresholding':
+    if algorithm == algorithms[THRESHOLDING]:
         threshold_value = st.number_input(label="Enter threshold value", min_value = 0, max_value=255)
+        params = {}
         params[THRESHOLD_VALUE] = threshold_value
+    # elif algorithm == algorithms[LOG_FUNCTION_TRANSFORM]:
+    #     c_value = st.number_input(label="Enter constant c value", min_value=0.1, max_value=10.0, value=1.0, step=0.1)
+    #     params = {}
+    #     params[C_VALUE] = c_value
 
         
 
@@ -52,14 +62,20 @@ with col2:
     result_placeholder = st.empty()
 
 def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
+def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
     """
     Replace or extend this function with your real implementations.
     It must return a PIL.Image.
     """
     if name == algorithms[NEGATIVE_IMAGE]:
+    if name == algorithms[NEGATIVE_IMAGE]:
         return negative_image(img)
     elif name == algorithms[THRESHOLDING]:
         return thresholding(img, param[THRESHOLD_VALUE])
+    elif name == algorithms[LOG_FUNCTION_TRANSFORM]:
+        return log_function_transform(img)
+    elif name == algorithms[INVERSE_LOG_FUNCTION_TRANSFORM]:
+        return inverse_log_transform(img)
     return img
 
 if uploaded is not None:
@@ -69,6 +85,7 @@ if uploaded is not None:
 
     if st.button("Apply"):
         with st.spinner("Applying algorithm..."):
+            output = apply_algorithm(image, algorithm, params)
             output = apply_algorithm(image, algorithm, params)
         result_placeholder.image(output, caption=f"Result — {algorithm}", width="stretch")
 
