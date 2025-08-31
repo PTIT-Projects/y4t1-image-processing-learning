@@ -37,7 +37,8 @@ algorithms = {
     NEGATIVE_IMAGE: NEGATIVE_IMAGE,
     THRESHOLDING: THRESHOLDING,
     LOG_FUNCTION_TRANSFORM: LOG_FUNCTION_TRANSFORM,
-    INVERSE_LOG_FUNCTION_TRANSFORM: INVERSE_LOG_FUNCTION_TRANSFORM
+    INVERSE_LOG_FUNCTION_TRANSFORM: INVERSE_LOG_FUNCTION_TRANSFORM,
+    POWER_LAW_TRANSFORM: POWER_LAW_TRANSFORM
 }
 col1, col2 = st.columns([1, 1])
 params = {}
@@ -49,10 +50,10 @@ with col1:
         threshold_value = st.number_input(label="Enter threshold value", min_value = 0, max_value=255)
         params = {}
         params[THRESHOLD_VALUE] = threshold_value
-    # elif algorithm == algorithms[LOG_FUNCTION_TRANSFORM]:
-    #     c_value = st.number_input(label="Enter constant c value", min_value=0.1, max_value=10.0, value=1.0, step=0.1)
-    #     params = {}
-    #     params[C_VALUE] = c_value
+    elif algorithm == algorithms[POWER_LAW_TRANSFORM]:
+        gamma_value = st.number_input(label="Enter gamma value")
+        params = {}
+        params[GAMMA_VALUE] = gamma_value
 
         
 
@@ -62,12 +63,10 @@ with col2:
     result_placeholder = st.empty()
 
 def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
-def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
     """
     Replace or extend this function with your real implementations.
     It must return a PIL.Image.
     """
-    if name == algorithms[NEGATIVE_IMAGE]:
     if name == algorithms[NEGATIVE_IMAGE]:
         return negative_image(img)
     elif name == algorithms[THRESHOLDING]:
@@ -76,6 +75,8 @@ def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
         return log_function_transform(img)
     elif name == algorithms[INVERSE_LOG_FUNCTION_TRANSFORM]:
         return inverse_log_transform(img)
+    elif name == algorithms[POWER_LAW_TRANSFORM]:
+        return power_law_transform(img, param[GAMMA_VALUE])
     return img
 
 if uploaded is not None:

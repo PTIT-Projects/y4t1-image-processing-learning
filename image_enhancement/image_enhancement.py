@@ -33,3 +33,10 @@ def inverse_log_transform(image: Image.Image):
     out = np.clip(out, 0, 255)
     out_img = Image.fromarray(np.round(out).astype(np.uint8), mode="L")
     return out_img
+
+def power_law_transform(image: Image.Image, gamma: float):
+    gray = image.convert("L")
+    arr = np.asarray(gray).astype(np.float64) / 255.0
+    out = np.power(arr, gamma)
+    out_img = Image.fromarray((np.clip(out, 0.0, 1.0) * 255.0).round().astype(np.uint8), mode="L")
+    return out_img
