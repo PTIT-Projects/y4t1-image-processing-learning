@@ -9,7 +9,7 @@ from constants import *
 from image_enhancement.image_enhancement import *
 from constants import *
 
-def save_pair(input_img: Image.Image, output_img: Image.Image, base_dir: str = "data") -> Path:
+def save_pair(input_img: Image.Image, output_img: Image.Image, algorithm: str = "", base_dir: str = "data") -> Path:
     """
     Create data/<datetime-folder>/ and save input.png and output.png.
     Returns the folder Path.
@@ -21,8 +21,8 @@ def save_pair(input_img: Image.Image, output_img: Image.Image, base_dir: str = "
     folder = base / ts
     folder.mkdir()
     # save as PNG
-    input_path = folder / "input.png"
-    output_path = folder / "output.png"
+    input_path = folder / f"input_{algorithm}.png"
+    output_path = folder / f"output_{algorithm}.png"
     input_img.save(str(input_path), format="PNG")
     output_img.save(str(output_path), format="PNG")
     return folder
@@ -38,7 +38,8 @@ algorithms = {
     THRESHOLDING: THRESHOLDING,
     LOG_FUNCTION_TRANSFORM: LOG_FUNCTION_TRANSFORM,
     INVERSE_LOG_FUNCTION_TRANSFORM: INVERSE_LOG_FUNCTION_TRANSFORM,
-    POWER_LAW_TRANSFORM: POWER_LAW_TRANSFORM
+    POWER_LAW_TRANSFORM: POWER_LAW_TRANSFORM,
+    HISTOGRAM_EQUALIZATION: HISTOGRAM_EQUALIZATION,
 }
 col1, col2 = st.columns([1, 1])
 params = {}
@@ -77,6 +78,8 @@ def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
         return inverse_log_transform(img)
     elif name == algorithms[POWER_LAW_TRANSFORM]:
         return power_law_transform(img, param[GAMMA_VALUE])
+    elif name == algorithms[HISTOGRAM_EQUALIZATION]:
+        return histogram_equalization(img)
     return img
 
 if uploaded is not None:
@@ -92,7 +95,7 @@ if uploaded is not None:
 
         # save pair
         try:
-            saved_folder = save_pair(image, output, base_dir="data")
+            saved_folder = save_pair(image, output, algorithm, base_dir="data")
             st.success(f"Saved input/output pair to: {saved_folder}")
         except Exception as e:
             st.error(f"Failed to save images: {e}")
