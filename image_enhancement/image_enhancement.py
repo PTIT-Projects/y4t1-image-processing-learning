@@ -51,3 +51,18 @@ def histogram_equalization(image: Image.Image):
     cdf = np.ma.filled(cdf_masked, 0).astype('uint8')
     out = cdf[arr]
     return Image.fromarray(out, mode="L")
+
+def median_filter(image: Image.Image, filter_size: int = 3):
+    gray = image.convert("L")
+    arr = np.array(gray)
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+    pad = filter_size // 2
+    padded_arr = np.pad(arr, pad_width=pad, mode='constant')
+    for i in range(height):
+        for j in range(width):
+            window = padded_arr[i:i+filter_size, j:j+filter_size]
+            result[i, j] = np.median(window)
+    return Image.fromarray(result, mode="L")
+
+

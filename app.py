@@ -40,6 +40,10 @@ algorithms = {
     INVERSE_LOG_FUNCTION_TRANSFORM: INVERSE_LOG_FUNCTION_TRANSFORM,
     POWER_LAW_TRANSFORM: POWER_LAW_TRANSFORM,
     HISTOGRAM_EQUALIZATION: HISTOGRAM_EQUALIZATION,
+    MEDIAN_FILTER: MEDIAN_FILTER,
+    MEAN_FILTER: MEAN_FILTER,
+    MEAN_WEIGHTED_FILTER: MEAN_WEIGHTED_FILTER,
+    NEAREST_NEIGHBOR_MEAN_FILTER: NEAREST_NEIGHBOR_MEAN_FILTER,
 }
 col1, col2 = st.columns([1, 1])
 params = {}
@@ -80,6 +84,8 @@ def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
         return power_law_transform(img, param[GAMMA_VALUE])
     elif name == algorithms[HISTOGRAM_EQUALIZATION]:
         return histogram_equalization(img)
+    elif name == algorithms[MEDIAN_FILTER]:
+        return median_filter(img, filter_size=3)
     return img
 
 if uploaded is not None:
