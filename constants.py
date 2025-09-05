@@ -13,3 +13,5 @@ NEAREST_NEIGHBOR_MEAN_FILTER = "Nearest Neighbor Mean Filter"
 # VALUE
 THRESHOLD_VALUE = "threshold_value"
 GAMMA_VALUE = "gamma_value"
+K_VALUE = "k_value"
+THETA_VALUE = "theta_value"

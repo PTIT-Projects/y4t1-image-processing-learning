@@ -59,6 +59,17 @@ with col1:
         gamma_value = st.number_input(label="Enter gamma value")
         params = {}
         params[GAMMA_VALUE] = gamma_value
+    elif algorithm == algorithms[NEAREST_NEIGHBOR_MEAN_FILTER]:
+        k = st.number_input(label="Enter k", min_value=1, step=1)
+        theta_str = st.text_input(label="Enter theta (float)", value="10.0")
+        try:
+            theta = float(theta_str)
+        except ValueError:
+            st.warning("Please enter a valid number for theta.")
+            theta = 10.0  # fallback default
+        params = {}
+        params[K_VALUE] = k
+        params[THETA_VALUE] = theta
 
         
 
@@ -90,6 +101,8 @@ def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
         return mean_filter(img, filter_size=3)
     elif name == algorithms[MEAN_WEIGHTED_FILTER]:
         return mean_weighted_filter(img, filter_size=3)
+    elif name == algorithms[NEAREST_NEIGHBOR_MEAN_FILTER]:
+        return k_nearest_neighbor_mean_filter(img, filter_size=3, k=param[K_VALUE], theta=param[THETA_VALUE])
     return img
 
 if uploaded is not None:

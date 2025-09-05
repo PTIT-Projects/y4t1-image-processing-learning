@@ -85,7 +85,6 @@ def mean_weighted_filter(image: Image.Image, filter_size: int = 3):
     result = np.zeros_like(arr)
     pad = filter_size // 2
     padded_arr = np.pad(arr, pad_width=pad, mode='constant')
-    # Create a simple weighted kernel (e.g., Gaussian-like)
     kernel = np.array([[1, 2, 1],
                        [2, 4, 2],
                        [1, 2, 1]], dtype=np.float32)
@@ -96,4 +95,23 @@ def mean_weighted_filter(image: Image.Image, filter_size: int = 3):
             result[i, j] = np.sum(window * kernel)
     return Image.fromarray(result.astype(np.uint8), mode="L")
 
+def k_nearest_neighbor_mean_filter(image: Image.Image, filter_size: int = 3, k: int = 1, theta: float = 10.0):
+    gray = image.convert("L")
+    arr = np.array(gray)
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+    pad = filter_size // 2
+    padded_arr = np.pad(arr, pad_width=pad, mode='constant')
+    for i in range(height):
+        for j in range(width):
+            window = padded_arr[i:i+filter_size, j:j+filter_size]
+            center_value = padded_arr[i + pad, j + pad]
+            flattened_window = window.flatten()
+            distances = np.abs(flattened_window - center_value)
+            nearest_indices = np.argsort(distances)[:k]
+            mean_value = np.mean(flattened_window[nearest_indices])
+            diff = np.abs(flattened_window - mean_value)
+            if (diff >= theta).any():
+                result[i, j] = mean_value
+    return Image.fromarray(result, mode="L")
 
