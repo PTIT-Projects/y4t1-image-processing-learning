@@ -65,4 +65,35 @@ def median_filter(image: Image.Image, filter_size: int = 3):
             result[i, j] = np.median(window)
     return Image.fromarray(result, mode="L")
 
+def mean_filter(image: Image.Image, filter_size: int = 3):
+    gray = image.convert("L")
+    arr = np.array(gray)
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+    pad = filter_size // 2
+    padded_arr = np.pad(arr, pad_width=pad, mode='constant')
+    for i in range(height):
+        for j in range(width):
+            window = padded_arr[i:i+filter_size, j:j+filter_size]
+            result[i, j] = np.mean(window)
+    return Image.fromarray(result.astype(np.uint8), mode="L")
+
+def mean_weighted_filter(image: Image.Image, filter_size: int = 3):
+    gray = image.convert("L")
+    arr = np.array(gray)
+    height, width = arr.shape
+    result = np.zeros_like(arr)
+    pad = filter_size // 2
+    padded_arr = np.pad(arr, pad_width=pad, mode='constant')
+    # Create a simple weighted kernel (e.g., Gaussian-like)
+    kernel = np.array([[1, 2, 1],
+                       [2, 4, 2],
+                       [1, 2, 1]], dtype=np.float32)
+    kernel /= kernel.sum()
+    for i in range(height):
+        for j in range(width):
+            window = padded_arr[i:i+filter_size, j:j+filter_size]
+            result[i, j] = np.sum(window * kernel)
+    return Image.fromarray(result.astype(np.uint8), mode="L")
+
 

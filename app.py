@@ -86,6 +86,10 @@ def apply_algorithm(img: Image.Image, name: str, param) -> Image.Image:
         return histogram_equalization(img)
     elif name == algorithms[MEDIAN_FILTER]:
         return median_filter(img, filter_size=3)
+    elif name == algorithms[MEAN_FILTER]:
+        return mean_filter(img, filter_size=3)
+    elif name == algorithms[MEAN_WEIGHTED_FILTER]:
+        return mean_weighted_filter(img, filter_size=3)
     return img
 
 if uploaded is not None:
